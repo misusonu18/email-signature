@@ -371,11 +371,6 @@
                     <input type="text" id="website" value="" onkeyup="updateSignature()">
                 </div>
 
-                <div class="form-group">
-                    <label for="logoUpload">Upload Logo Image</label>
-                    <input type="file" id="logoUpload" accept="image/*" onchange="handleLogoUpload(event)">
-                </div>
-
                 <div class="form-group full-width">
                     <label for="address">Address</label>
                     <textarea id="address" onkeyup="updateSignature()"></textarea>
@@ -400,22 +395,9 @@
                 ✅ Signature content copied to clipboard! Now paste it directly in Gmail Settings → Signature section.
             </div>
         </div>
-    </div>
-
-    <script>
-        let uploadedLogoDataUrl = null;
-
-        function handleLogoUpload(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    uploadedLogoDataUrl = e.target.result;
-                    updateSignature();
-                };
-                reader.readAsDataURL(file);
-            }
-        }
+    </div>    <script>
+        // Static company logo path - replace with your actual logo
+        const staticLogoPath = './logos/company-logo.png';
 
         function updateSignature() {
             const fullName = document.getElementById('fullName').value;
@@ -425,12 +407,8 @@
             const website = document.getElementById('website').value;
             const address = document.getElementById('address').value;
 
-            let logoHTML = '';
-            if (uploadedLogoDataUrl) {
-                logoHTML = `<img src="${uploadedLogoDataUrl}" style="width: 80px; height: 80px; object-fit: contain; border-radius: 8px; background: #f8f9ff; border: 2px solid #e1e5e9;" alt="Logo">`;
-            }
-
-            console.log(address);
+            // Always use the static company logo
+            const logoHTML = `<img src="${staticLogoPath}" style="width: 80px; height: 80px; object-fit: contain; border-radius: 8px; background: #f8f9ff; border: 2px solid #e1e5e9;" alt="Company Logo">`;
 
             const signatureHTML = `
                 <table cellpadding="0" cellspacing="0" style="border: none; font-family: Arial, sans-serif; font-size: 14px; line-height: 1.4;">
@@ -547,8 +525,6 @@
             document.getElementById('email').value = 'jahanvi.hr@gmail.com';
             document.getElementById('website').value = 'www.artisanscloud.com';
             document.getElementById('address').value = '1108-9, The Spire2, 150 feet Ring Road, Nr. Sheetal Park, Opp. Rajkot, India - 360006';
-            document.getElementById('logoUpload').value = '';
-            uploadedLogoDataUrl = null;
             updateSignature();
         }
 
