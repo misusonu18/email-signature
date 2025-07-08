@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Gmail Signature Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+
+        .form-section {
+            padding: 30px;
+            background: #f8f9ff;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input, textarea {
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .preview-section {
+            padding: 30px;
+            background: white;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        .preview-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .signature-preview {
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            padding: 20px;
+            background: #f8f9ff;
+            margin-bottom: 20px;
+        }
+
+        .signature {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            line-height: 1.4;
+            color: #333;
+        }
+
+        .signature table {
+            border-collapse: collapse;
+            border-spacing: 0;
+            width: 100%;
+        }
+
+        .signature td {
+            padding: 0;
+            vertical-align: top;
+        }
+
+        .logo-section {
+            padding-right: 20px;
+            border-right: 2px solid #ddd;
+            width: 100px;
+        }
+
+        .logo-container {
+            width: 80px;
+            height: 80px;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .uploaded-logo {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: #f8f9ff;
+            border: 2px solid #e1e5e9;
+        }
+
+        .logo-shape {
+            position: absolute;
+            border-radius: 8px;
+        }
+
+        .shape-1 {
+            width: 50px;
+            height: 60px;
+            background: linear-gradient(135deg, #00bcd4, #0097a7);
+            top: 20px;
+            left: 10px;
+            transform: skew(-15deg);
+        }
+
+        .shape-2 {
+            width: 50px;
+            height: 60px;
+            background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+            top: 0px;
+            right: 10px;
+            transform: skew(15deg);
+        }
+
+        .shape-3 {
+            width: 50px;
+            height: 60px;
+            background: linear-gradient(135deg, #e91e63, #c2185b);
+            bottom: 20px;
+            left: 35px;
+            transform: skew(-15deg);
+        }
+
+        .contact-section {
+            padding-left: 20px;
+        }
+
+        .name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+        }
+
+        .title {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            color: #34495e;
+        }
+
+        .contact-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ecf0f1;
+            border-radius: 50%;
+            font-size: 12px;
+        }
+
+        .contact-item a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .contact-item a:hover {
+            text-decoration: underline;
+        }
+
+        .code-section {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .code-section h3 {
+            margin-top: 0;
+            color: #3498db;
+        }
+
+        .code-content {
+            background: #34495e;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #ecf0f1;
+            color: #2c3e50;
+        }
+
+        .btn-secondary:hover {
+            background: #d5dbdb;
+        }
+
+        .file-input {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .file-input:hover {
+            background: #2980b9;
+        }
+
+        .file-input input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                margin: 10px;
+            }
+
+            .signature table {
+                font-size: 12px;
+            }
+
+            .logo-container {
+                width: 80px;
+                height: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 Dynamic Signature Generator</h1>
+            <p>Create your professional Gmail signature with live preview</p>
+        </div>
+
+        <div class="form-section">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" value="" onkeyup="updateSignature()">
+                </div>
+
+                <div class="form-group">
+                    <label for="jobTitle">Job Title</label>
+                    <input type="text" id="jobTitle" value="" onkeyup="updateSignature()">
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="text" id="phone" value="" onkeyup="updateSignature()">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" value="" onkeyup="updateSignature()">
+                </div>
+
+                <div class="form-group">
+                    <label for="website">Website</label>
+                    <input type="text" id="website" value="" onkeyup="updateSignature()">
+                </div>
+
+                <div class="form-group">
+                    <label for="logoUpload">Upload Logo Image</label>
+                    <input type="file" id="logoUpload" accept="image/*" onchange="handleLogoUpload(event)">
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="address">Address</label>
+                    <textarea id="address" onkeyup="updateSignature()"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="preview-section">
+            <h2 class="preview-title">📧 Live Preview</h2>
+            <div class="signature-preview">
+                <div class="signature" id="signaturePreview">
+                    <!-- Signature will be generated here -->
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="copySignatureContent()">📋 Copy Signature</button>
+                <button class="btn btn-secondary" onclick="resetForm()">🔄 Reset Form</button>
+            </div>
+
+            <div class="success-message" id="successMessage">
+                ✅ Signature content copied to clipboard! Now paste it directly in Gmail Settings → Signature section.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let uploadedLogoDataUrl = null;
+
+        function handleLogoUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    uploadedLogoDataUrl = e.target.result;
+                    updateSignature();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function updateSignature() {
+            const fullName = document.getElementById('fullName').value;
+            const jobTitle = document.getElementById('jobTitle').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+            const website = document.getElementById('website').value;
+            const address = document.getElementById('address').value;
+
+            let logoHTML = '';
+            if (uploadedLogoDataUrl) {
+                logoHTML = `<img src="${uploadedLogoDataUrl}" style="width: 80px; height: 80px; object-fit: contain; border-radius: 8px; background: #f8f9ff; border: 2px solid #e1e5e9;" alt="Logo">`;
+            }
+
+            console.log(address);
+
+            const signatureHTML = `
+                <table cellpadding="0" cellspacing="0" style="border: none; font-family: Arial, sans-serif; font-size: 14px; line-height: 1.4;">
+                    <tr>
+                        <td style="padding-right: 20px; vertical-align: middle; border-right: 2px solid #ddd; width: 100px;">
+                            <div style="text-align: center;">
+                                ${logoHTML}
+                            </div>
+                        </td>
+                        <td style="padding-left: 20px; vertical-align: top;">
+                            <div style="font-size: 20px; font-weight: bold; color: #2c3e50; margin-bottom: 5px; letter-spacing: 1px;">
+                                ${fullName}
+                            </div>
+                            <div style="font-size: 14px; color: #7f8c8d; margin-bottom: 12px; font-style: italic;">
+                                ${jobTitle}
+                            </div>
+                            <div style="display: flex; align-items: center; margin-bottom: 6px; color: #34495e;">
+                                <div style="width: 16px; height: 16px; margin-right: 8px; display: flex; align-items: center; justify-content: center; background: #ecf0f1; border-radius: 50%; font-size: 10px;">📞</div>
+                                <a href="tel:${phone.replace(/[^0-9+]/g, '')}" style="color: #000; text-decoration: none; font-size: 13px;">${phone}</a>
+                            </div>
+                            <div style="display: flex; align-items: center; margin-bottom: 6px; color: #34495e;">
+                                <div style="width: 16px; height: 16px; margin-right: 8px; display: flex; align-items: center; justify-content: center; background: #ecf0f1; border-radius: 50%; font-size: 10px;">✉️</div>
+                                <a href="mailto:${email}" style="color: #000; text-decoration: none; font-size: 13px;">${email}</a>
+                            </div>
+                            ${website ? `<div style="display: flex; align-items: center; margin-bottom: 6px; color: #34495e;">
+                                <div style="width: 16px; height: 16px; margin-right: 8px; display: flex; align-items: center; justify-content: center; background: #ecf0f1; border-radius: 50%; font-size: 10px;">🌐</div>
+                                <a href="https://${website.replace(/^https?:\/\//, '')}" style="color: #3498db; text-decoration: none; font-size: 13px;">${website}</a>
+                            </div>` : ''}
+
+                            ${address ? `
+<div style="display: flex; align-items: flex-start; margin-bottom: 6px; color: #34495e;">
+    <div style="width: 16px; height: 16px; margin-right: 8px; display: flex; align-items: center; justify-content: center; background: #ecf0f1; border-radius: 50%; font-size: 10px; margin-top: 2px;">📍</div>
+    <span style="line-height: 1.3; font-size: 12px;">${address}</span>
+</div>
+` : ''}
+
+                        </td>
+                    </tr>
+                </table>
+            `;
+
+            document.getElementById('signaturePreview').innerHTML = signatureHTML;
+
+            // Update HTML code display
+            const escapedHTML = signatureHTML
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+
+            document.getElementById('htmlCodeDisplay').innerHTML = escapedHTML;
+        }
+
+        function copySignatureContent() {
+            const signatureElement = document.getElementById('signaturePreview');
+
+            // Create a temporary div to hold the signature
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = signatureElement.innerHTML;
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.left = '-9999px';
+            document.body.appendChild(tempDiv);
+
+            // Select the content
+            const range = document.createRange();
+            range.selectNodeContents(tempDiv);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+            // Copy to clipboard
+            try {
+                document.execCommand('copy');
+                selection.removeAllRanges();
+                document.body.removeChild(tempDiv);
+
+                // Show success message
+                const successMessage = document.getElementById('successMessage');
+                successMessage.style.display = 'block';
+                setTimeout(() => {
+                    successMessage.style.display = 'none';
+                }, 3000);
+            } catch (err) {
+                console.error('Failed to copy signature content:', err);
+                // Fallback to copying HTML code
+                copyHTMLCode();
+            }
+        }
+
+        function copyHTMLCode() {
+            const signatureHTML = document.getElementById('signaturePreview').innerHTML;
+
+            // Create temporary textarea
+            const textarea = document.createElement('textarea');
+            textarea.value = signatureHTML;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+
+            // Show success message
+            const successMessage = document.getElementById('successMessage');
+            successMessage.style.display = 'block';
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 3000);
+        }
+
+        function resetForm() {
+            document.getElementById('fullName').value = 'JAHANVI VEGAD';
+            document.getElementById('jobTitle').value = 'HR Generalist';
+            document.getElementById('phone').value = '+91-7777777777';
+            document.getElementById('email').value = 'jahanvi.hr@gmail.com';
+            document.getElementById('website').value = 'www.artisanscloud.com';
+            document.getElementById('address').value = '1108-9, The Spire2, 150 feet Ring Road, Nr. Sheetal Park, Opp. Rajkot, India - 360006';
+            document.getElementById('logoUpload').value = '';
+            uploadedLogoDataUrl = null;
+            updateSignature();
+        }
+
+        // Polyfill for roundRect
+        if (!CanvasRenderingContext2D.prototype.roundRect) {
+            CanvasRenderingContext2D.prototype.roundRect = function(x, y, width, height, radius) {
+                this.beginPath();
+                this.moveTo(x + radius, y);
+                this.lineTo(x + width - radius, y);
+                this.quadraticCurveTo(x + width, y, x + width, y + radius);
+                this.lineTo(x + width, y + height - radius);
+                this.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+                this.lineTo(x + radius, y + height);
+                this.quadraticCurveTo(x, y + height, x, y + height - radius);
+                this.lineTo(x, y + radius);
+                this.quadraticCurveTo(x, y, x + radius, y);
+                this.closePath();
+            };
+        }
+
+        // Initialize signature on page load
+        updateSignature();
+    </script>
+</body>
+</html>
