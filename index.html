@@ -365,16 +365,6 @@
                     <label for="email">Email Address</label>
                     <input type="email" id="email" value="" onkeyup="updateSignature()">
                 </div>
-
-                <div class="form-group">
-                    <label for="website">Website</label>
-                    <input type="text" id="website" value="" onkeyup="updateSignature()">
-                </div>
-
-                <div class="form-group full-width">
-                    <label for="address">Address</label>
-                    <textarea id="address" onkeyup="updateSignature()"></textarea>
-                </div>
             </div>
         </div>
 
@@ -404,11 +394,10 @@
             const jobTitle = document.getElementById('jobTitle').value;
             const phone = document.getElementById('phone').value;
             const email = document.getElementById('email').value;
-            const website = document.getElementById('website').value;
-            const address = document.getElementById('address').value;
+            const website = 'www.artisanscloud.com';
 
             // Always use the static company logo
-            const logoHTML = `<img src="${staticLogoPath}" style="width: 80px; height: 80px; object-fit: contain; border-radius: 8px; background: #f8f9ff;" alt="Company Logo">`;
+            const logoHTML = `<img src="${staticLogoPath}" style="width: 80px; height: 80px; object-fit: contain; border-radius: 8px;" alt="Company Logo">`;
 
             const signatureHTML = `
                 <table cellpadding="0" cellspacing="0" style="border: none; font-family: Arial, sans-serif; font-size: 14px; line-height: 1.4;">
@@ -437,14 +426,6 @@
                                 <div style="width: 16px; height: 16px; margin-right: 8px; display: flex; align-items: center; justify-content: center; background: #ecf0f1; border-radius: 50%; font-size: 10px;">🌐</div>
                                 <a href="https://${website.replace(/^https?:\/\//, '')}" style="color: #3498db; text-decoration: none; font-size: 13px;">${website}</a>
                             </div>` : ''}
-
-                            ${address ? `
-<div style="display: flex; align-items: flex-start; margin-bottom: 6px; color: #34495e;">
-    <div style="width: 16px; height: 16px; margin-right: 8px; display: flex; align-items: center; justify-content: center; background: #ecf0f1; border-radius: 50%; font-size: 10px; margin-top: 2px;">📍</div>
-    <span style="line-height: 1.3; font-size: 12px;">${address}</span>
-</div>
-` : ''}
-
                         </td>
                     </tr>
                 </table>
@@ -519,12 +500,11 @@
         }
 
         function resetForm() {
-            document.getElementById('fullName').value = 'JAHANVI VEGAD';
-            document.getElementById('jobTitle').value = 'HR Generalist';
-            document.getElementById('phone').value = '+91-7777777777';
-            document.getElementById('email').value = 'jahanvi.hr@gmail.com';
+            document.getElementById('fullName').value = '';
+            document.getElementById('jobTitle').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('email').value = '';
             document.getElementById('website').value = 'www.artisanscloud.com';
-            document.getElementById('address').value = '1108-9, The Spire2, 150 feet Ring Road, Nr. Sheetal Park, Opp. Rajkot, India - 360006';
             updateSignature();
         }
 
